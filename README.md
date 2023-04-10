@@ -1,4 +1,4 @@
-# ConversionFunction
+# ConversionFunctions
 For sbyte * and string in C# with [TerraFX.Interop.Xlib](https://github.com/terrafx/terrafx.interop.xlib).
 
 Example:
