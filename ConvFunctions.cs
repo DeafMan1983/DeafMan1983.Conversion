@@ -1,10 +1,10 @@
-﻿namespace DeafMan1983;
+namespace DeafMan1983;
 
 using System.Runtime.InteropServices;
 using System.Text;
 public unsafe static class ConvFunctions
 {
-        //
+    //
     //  Conversion functions for sbyte * and string hacks!
     //
     //  Changvs and fixes:
@@ -15,10 +15,10 @@ public unsafe static class ConvFunctions
     //      CharPtrToString to StringwithSBytePointer
     //  Added:
     //  new functions for sbyte ** and string[]
-    //      SByteDoublePointersWithStringArray
+    //      SByteDoublePointersWithStringArray ( Fixed and add NativeMemory, Thanks Jan Kotas!!! )
     //      StringArrayWithSByteDoublePointers
-    // 
-    //      
+    //  Update: to 2.0.0
+     
 
     public static int StringOfSize(string str_value)
     {
@@ -74,26 +74,25 @@ public unsafe static class ConvFunctions
         return Encoding.UTF8.GetString((byte *)charptr, (int)(ptr - (byte *)charptr));
     }
 
-    public static sbyte **SByteDoublePointersWithStringArray(string[] arrays)
+    public static sbyte **SByteDoublePointersWithStringArray(string[] args)
     {
-        sbyte **array_ptrs = null;
-        for (int i = 0; i < arrays.Length; i++)
+        sbyte** sArgs = (sbyte **)NativeMemory.Alloc((nuint)args.Length * (nuint)sizeof(sbyte*));
+        for (int i = 0; i < args.Length; i++)
         {
-            array_ptrs[i] = SBytePointerWithString(arrays[i]);
+            sArgs[i] = SBytePointerWithString(args[i]);
         }
 
-        return array_ptrs;
+        return sArgs;
     }
 
-    public static string[] StringArrayWithSByteDoublePointers(sbyte **array_ptrs)
+    public static string[] StringArrayWithSByteDoublePointers(sbyte **sArrays, int array_length)
     {
-        Span<string> span_arrays = new Span<string>();
-        for (int i = 0; i < span_arrays.Length; i++)
+        string[] arrays = new string[array_length];
+        for (int i = 0; i < array_length; i++)
         {
-            string[] arrays = span_arrays.ToArray();;
-            arrays[i] = StringwithSBytePointer(array_ptrs[i]);
+            arrays[i] = StringwithSBytePointer(sArrays[i]);
         }
 
-        return span_arrays.ToArray();;
+        return arrays;
     }
 }
