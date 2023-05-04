@@ -48,10 +48,8 @@ For `string[]` for `sbyte **` like you use `delegate *unmanaged[Cdecl]<sbyte **,
 ....
 string[] args = StringArrayWithSByteDoublePointers(sArrays, array_length);
 ....
-Warning It is important for `[UnmanagedCallerOnly]` and it uses `sbyte **` and `int` for `array_length`
-....
 ```
-
+Warning It is important for `[UnmanagedCallerOnly]` and it uses `sbyte **` and `int` for `array_length`
 If you pass `string[] args` from Program.cs then you need add `SByteDoublePointersWithStringArray`
 
 Example:
