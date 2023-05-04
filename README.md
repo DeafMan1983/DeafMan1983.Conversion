@@ -1,12 +1,13 @@
 # ConversionFunctions
 For sbyte * and string in C# with [TerraFX.Interop.Xlib](https://github.com/terrafx/terrafx.interop.xlib).
+For anything String[] and sbyte ** for deleagte unmanaged[Cdecl] functions for access external method from native library or whatever communication with libraries....
 
 Example:
 For `XOpenDisplay(sbyte * display_name)`
 ```
 using static DeafMan1983.ConvFunctions;
 ...
-Display *display = XOpenDisplay(StringFromHeap(string.Empty));
+Display *display = XOpenDisplay(SBytePointerWithString(string.Empty));
 ...
 ```
 For `XFontStruct` and `XFontSet`
