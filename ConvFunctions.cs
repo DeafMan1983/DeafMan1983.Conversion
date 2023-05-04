@@ -15,7 +15,7 @@ public unsafe static class ConvFunctions
     //      CharPtrToString to StringwithSBytePointer
     //  Added:
     //  new functions for sbyte ** and string[]
-    //      SByteDoublePointersWithStringArray ( Fixed and add NativeMemory, Thanks Jan Kotas!!! )
+    //      SByteDoublePointersWithStringArray ( Fixed and add NativeMemory, Thanks @jkotas ( Jan Kotas!!! ) )
     //      StringArrayWithSByteDoublePointers
     //  Update: to 2.0.0
      
