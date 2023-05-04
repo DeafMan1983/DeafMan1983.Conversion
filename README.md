@@ -55,7 +55,7 @@ If you pass `string[] args` from Program.cs then you need add `SByteDoublePointe
 Example:
 ```
 sbyte **sArrays = SByteDoublePointersWithStringArray(args);
-pfnMainFunc = (`delegate *unmanaged[Cdecl]<sbyte **, int, int`)dlsym(dlopen(SBytePointerWithString("libApp.so"), 0x00002), SBytePointerWithString("LA_MainFunc"));
+pfnMainFunc(sArrays, args.length);
 ....
 ```
 And I have updated already in Nuget.org
