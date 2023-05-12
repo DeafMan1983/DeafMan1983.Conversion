@@ -20,7 +20,7 @@ public unsafe static class ConvFunctions
     //  Added: new functions for sbyte ** and string[]
     //      SByteDoublePointersWithStringArray ( Fixed and add NativeMemory, Thanks Jan Kotas!!! )
     //      StringArrayWithSByteDoublePointers
-    //  Update: to 2.0.1
+    //  Update: to 3.0.0
 
 
     public static int StringOfSize(string str_value)

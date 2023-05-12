@@ -1,16 +1,20 @@
 # ConversionFunctions
 
-New 2.0.0 ConversionFunction
+Conversion functions for sbyte * and string hacks!
 
-Changes & fixes:
-* Replaced:
-         StringFromCharPtr to SBytePointerWithStringForAdvanced
-         StringFromHeap to SBytePointerWithString
-         CharPtrToString to StringwithSBytePointer
-*  Added: new functions for sbyte ** and string[]
-         SByteDoublePointersWithStringArray ( Fixed and add NativeMemory, Thanks Jan Kotas!!! )
-         StringArrayWithSByteDoublePointers
-* Updated to 2.0.0
+  Changvs and fixes:
+  Fixed:
+      SByteDoublePointersWithStringArray, thanks Jester @QubitTooLate
+      
+  -----------------------------------------------------
+  Replaced:
+      StringFromCharPtr to SBytePointerWithStringForAdvanced
+      StringFromHeap to SBytePointerWithString
+      CharPtrToString to StringwithSBytePointer
+  Added: new functions for sbyte ** and string[]
+      SByteDoublePointersWithStringArray ( Fixed and add NativeMemory, Thanks Jan Kotas!!! )
+      StringArrayWithSByteDoublePointers
+  Update: to 3.0.0
 
 How does it work?
 If you use `sbyte*` for `string` like example in X11's `XOpenDisplay()` or `SDL_SetWindowTitle()`
