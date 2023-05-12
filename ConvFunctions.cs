@@ -63,7 +63,9 @@ public unsafe static class ConvFunctions
 
     public static string StringwithSBytePointer(sbyte *charptr)
     {
-        if (charptr == null)
+        nint ptr_ = (nint)charptr;
+
+        if (ptr_ == nint.Zero)
         {
             return string.Empty;
         }
@@ -75,8 +77,8 @@ public unsafe static class ConvFunctions
         }
 
         return System.Text.Encoding.UTF8.GetString(
-            (byte*)charptr,
-            (int) (ptr - (byte*)charptr)
+            (byte*)ptr_,
+            (int) (ptr - (byte*)ptr_)
         );
     }
 
