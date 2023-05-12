@@ -74,7 +74,10 @@ public unsafe static class ConvFunctions
             ptr++;
         }
 
-        return Encoding.UTF8.GetString((byte *)charptr, (int)(ptr - (byte *)charptr));
+        return System.Text.Encoding.UTF8.GetString(
+            (byte*)charptr,
+            (int) (ptr - (byte*)charptr)
+        );
     }
 
     /*
