@@ -6,7 +6,6 @@ using System.Text;
 
 public unsafe static class ConvFunctions
 {
-    //
     //  Conversion functions for sbyte *, sbyte **, byte *, byte ** void *, string and string[]
     //
     //  Changvs and fixes:
@@ -394,8 +393,12 @@ public unsafe static class ConvFunctions
     public static void Free(void *structure)
     {
         UnmanagedStructurePointer um = new(structure);
-        if (structure != null)
+        if (um.Value != null)
         {
+            if (structure != null)
+            {
+                Delete(structure);
+            }
             um.Dispose();
         }
     }
@@ -403,9 +406,10 @@ public unsafe static class ConvFunctions
     // Like delete() in C/C++
     public static void Delete(void *structure)
     {
-        if (Free != null)
+        UnmanagedStructurePointer um = new(structure);
+        if (structure != null)
         {
-            Free(structure);
+            um.Dispose();
         }
     }
 }
