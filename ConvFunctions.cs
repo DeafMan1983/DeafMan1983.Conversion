@@ -1,5 +1,6 @@
 ﻿namespace DeafMan1983;
 
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -393,7 +394,7 @@ public unsafe static class ConvFunctions
     public static void Free(void *structure)
     {
         UnmanagedStructurePointer um = new(structure);
-        if (um.Value != null)
+        if (structure != null)
         {
             um.Dispose();
         }
