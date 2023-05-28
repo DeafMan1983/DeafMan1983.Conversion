@@ -62,4 +62,13 @@ sbyte **sArrays = SByteDoublePointersWithStringArray(args);
 pfnMainFunc(sArrays, args.length);
 ....
 ```
+New feature for Alloc, Free and Delete like `C/C++`
+```
+Display *display = XOpenDisplay(null);
+Alloc(display);
+....
+XCloseDisplay(display);
+Delete(display);
+```
+
 And I have updated already in Nuget.org
