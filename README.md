@@ -4,24 +4,24 @@ Conversion functions for sbyte * and string hacks!
 
 Conversion functions for sbyte *, sbyte **, byte *, byte ** void *, string and string[]
 
- Changvs and fixes:
- Fixed: 
-    * Since NullReferenceExeepction cause some can't new instance
-    * some functions
+Changvs and fixes:<br />
+Fixed: <br />
+- Since NullReferenceExeepction cause some can't new instance
+- some functions
 
- Replaced: for sbyte * and sbyte **
-    * StringSize to LengthSize
-    * StringwithSBytePointer to StringFromSBytePointer
-    * StringArrayWithSByteDoublePointers to StringArrayFromByteDoublePointers
-    * SBytePointerWithString to SBytePointerFromString
-    * SByteDoublePointerWithStringArrays to SByteDoublePointersFromStringArray
+Replaced:<br />
+- StringSize to LengthSize
+- StringwithSBytePointer to StringFromSBytePointer
+- StringArrayWithSByteDoublePointers to StringArrayFromByteDoublePointers
+- SBytePointerWithString to SBytePointerFromString
+- SByteDoublePointerWithStringArrays to SByteDoublePointersFromStringArray
  
- Added;
-    * byte * and byte ** for StringFromBytePointer, StringArrayFromByteDoublePointers,
-    * BytePointerFromString, ByteDoublePointersFromStringArray
-    * void * for Alloc, Free and Delete
-     
- Updated to 4.0.0
+Added;<br />
+- byte * and byte ** for StringFromBytePointer, StringArrayFromByteDoublePointers,
+- BytePointerFromString, ByteDoublePointersFromStringArray
+- void * for Alloc, Free and Delete
+<br />
+pdated to 4.0.0
 
 How does it work?
 If you use `sbyte*` for `string` like example in X11's `XOpenDisplay()` or `SDL_SetWindowTitle()`
