@@ -27,26 +27,26 @@ How does it work?
 If you use `sbyte*` for `string` like example in X11's `XOpenDisplay()` or `SDL_SetWindowTitle()`
 
 For X11 from TerraFX.Interop.Xlib
-```
+```cs
 ....
 Display *display = XOpenDisplay(SBytePointerFromString(string.Empty));
 ....
 ```
 Or for SDL3 from DeafMan1983.Interop.SDL3
-```
+```cs
 ....
 SDL_SetWindows(window, SBytePointerWithString("Hello SDL3 Window"));
 ....
 ```
 
 For `string` for `sbyte *` like example X11's `XDisplayString()` or SDL3's `SDL_GetWindowTitle()`
-```
+```cs
 ....
 string d_str = StringFromSBytePointer(XDisplayString(display));
 ....
 ```
 or SDL3
-```
+```cs
 ....
 string title_str = StringFromSBytePointer(SDL_GetWindowTitle(window));
 ....
@@ -55,7 +55,7 @@ string title_str = StringFromSBytePointer(SDL_GetWindowTitle(window));
 And new more functions:
 
 For `string[]` for `sbyte **` like you use `delegate *unmanaged[Cdecl]<sbyte **, int, void>` or `delegate *unmanaged[Cdecl]<sbyte **, int, int>` and It works for Game, Application they can load external native library but I have tested with `Console.WriteLine()` It is successfully. But I never did other like Winfows.Forms or Xlib, SDL3 I will see how does it work for external native libraries.
-```
+```cs
 ....
 string[] args = StringArrayFromSByteDoublePointers(sArrays, array_length);
 ....
@@ -64,13 +64,13 @@ Warning It is important for `[UnmanagedCallerOnly]` and it uses `sbyte **` and `
 If you pass `string[] args` from Program.cs then you need add `SByteDoublePointersFromStringArray`
 
 Example:
-```
+```cs
 sbyte **sArrays = SByteDoublePointersFromStringArray(args);
 pfnMainFunc(sArrays, args.length);
 ....
 ```
 New feature for Alloc, Free and Delete like `C/C++`
-```
+```cs
 SDL_Renderer *renderer = SDL_CreateRenderer(window, null, SDL_RENDER_ACCELERATOR);
 Alloc(renderer);
 ....
