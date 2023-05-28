@@ -6,92 +6,228 @@ using System.Text;
 public unsafe static class ConvFunctions
 {
     //
-    //  Conversion functions for sbyte * and string hacks!
+    //  Conversion functions for sbyte *, sbyte **, byte *, byte ** void *, string and string[]
     //
     //  Changvs and fixes:
-    //  Fixed:
-    //      SByteDoublePointersWithStringArray, thanks Jester @QubitTooLate
+    //  Fixed: 
+    //      Since NullReferenceExeepction cause some can't new instance
+    //      some functions
+    //
+    //  Replaced: for sbyte * and sbyte **
+    //      StringSize to LengthSize
+    //      StringwithSBytePointer to StringFromSBytePointer
+    //      StringArrayWithSByteDoublePointers to StringArrayFromByteDoublePointers
+    //      SBytePointerWithString to SBytePointerFromString
+    //      SByteDoublePointerWithStringArrays to SByteDoublePointersFromStringArray
+    //  
+    //  Added;
+    //      byte * and byte ** for StringFromBytePointer, StringArrayFromByteDoublePointers,
+    //      BytePointerFromString, ByteDoublePointersFromStringArray
+    //      void * for Alloc, Free and Delete
     //      
-    //  -----------------------------------------------------
-    //  Replaced:
-    //      StringFromCharPtr to SBytePointerWithStringForAdvanced
-    //      StringFromHeap to SBytePointerWithString
-    //      CharPtrToString to StringwithSBytePointer
-    //  Added: new functions for sbyte ** and string[]
-    //      SByteDoublePointersWithStringArray ( Fixed and add NativeMemory, Thanks Jan Kotas!!! )
-    //      StringArrayWithSByteDoublePointers
-    //  Update: to 3.0.0
+    //  Updated to 4.0.0
 
 
-    public static int StringOfSize(string str_value)
+    /*
+        Length Size means sizeof() or strlen();
+    */
+    public static int LengthSize(string str)
     {
-        if (str_value == null)
-            {
-                return 0;
-            }
-            return (str_value.Length * 4) + 1;
-    }
-
-    public static sbyte *SBytePointerWithStringForAdvanced(string str_value, sbyte *buf_value, int size_value)
-    {
-        if (str_value == null)
-            {
-                return (sbyte*)0;
-            }
-            fixed (char* strPtr = str_value)
-            {
-                Encoding.UTF8.GetBytes(strPtr, str_value.Length + 1, (byte *)buf_value, size_value);
-            }
-            return buf_value;
-    }
-
-    public static sbyte *SBytePointerWithString(string str_value)
-    {
-        if (str_value == null)
+        if (str == null)
         {
-            return (sbyte*)0;
+            return 0;
         }
-
-        int strOfSize = StringOfSize(str_value);
-        sbyte* buf_value = (sbyte*)Marshal.AllocHGlobal(strOfSize);
-        fixed (char* strPtr = str_value)
-        {
-            Encoding.UTF8.GetBytes(strPtr, str_value.Length + 1, (byte *)buf_value, strOfSize);
-        }
-        return buf_value;
+        return (str.Length * 4) + 1;
     }
 
-    public static string StringwithSBytePointer(sbyte *charptr)
+    /*
+        BYTE * and BYTE **
+    */
+    public static string StringFromBytePointer(byte *s, bool freePtr = false)
     {
-        nint ptr_ = (nint)charptr;
-
-        if (ptr_ == nint.Zero)
+        if (s == null)
         {
             return string.Empty;
         }
 
-        byte *ptr = (byte*)charptr;
+        byte* ptr = (byte*) s;
         while (*ptr != 0)
         {
             ptr++;
         }
 
-        return System.Text.Encoding.UTF8.GetString(
-            (byte*)ptr_,
-            (int) (ptr - (byte*)ptr_)
+        string result = System.Text.Encoding.UTF8.GetString(
+            s, (int) (ptr - (byte*) s)
         );
+
+        if (freePtr)
+        {
+            NativeMemory.Free(s);
+        }
+        return result;
     }
 
+    public static byte* BytePointerFromString(string str)
+    {
+        if (str == null)
+        {
+            return (byte*) 0;
+        }
+
+        int bufferSize = LengthSize(str);
+        byte *buffer = (byte *)NativeMemory.Alloc((nuint)bufferSize);
+        fixed (char* strPtr = str)
+        {
+            Encoding.UTF8.GetBytes(strPtr, str.Length + 1, buffer, bufferSize);
+        }
+        return buffer;
+    }
+
+    class UnmanagedFromBytePoublePointers : IDisposable
+    {
+        private byte **__values;
+        private int __length;
+        private bool disposed = false;
+
+        public UnmanagedFromBytePoublePointers(string[] arrays)
+        {
+            __values = (byte **)NativeMemory.Alloc((nuint)arrays.Length, (nuint)sizeof(sbyte *));
+            __length = arrays.Length;
+
+            for (int i = 0; i < arrays.Length; i++)
+            {
+                int len = Encoding.UTF8.GetByteCount(arrays[i]) + 1;
+                __values[i] = (byte *)NativeMemory.Alloc((nuint)len);
+                Encoding.UTF8.GetBytes(arrays[i].AsSpan(), new Span<byte>(__values[i], len));
+                __values[i][len - 1] = 0;
+            }
+        }
+
+        ~UnmanagedFromBytePoublePointers()
+        {
+            Dispose(false);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if(!this.disposed)
+            {
+                if(disposing)
+                {
+                    if (__values != null)
+                    {
+                        for (int i = 0; i < __length; i++)
+                        {
+                            if (__values[i] != null)
+                            {
+                                NativeMemory.Free(__values[i]);
+                                __values[i] = null;
+                            }
+                        }
+                    }
+                }
+
+                NativeMemory.Free(__values);
+                __values = null;
+
+                disposed = true;
+
+            }
+        }
+
+        public byte **Valves => __values;
+        public int Length => __length;
+        public byte *this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= __length)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+                return __values[index];
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+    }
+
+    public static byte **ByteDoublePointersFromStringArray(string[] strs)
+    {
+        UnmanagedFromBytePoublePointers um = new(strs);
+        return um.Valves;
+    }
+
+    public static string[] StringArrayFromByteDoublePointers(byte **bytes, int lengthSize)
+    {
+        if (lengthSize < 0)
+        {
+            throw new IndexOutOfRangeException();
+        }
+
+        string[] arrays = new string[lengthSize];
+        for (int i = 0; i < arrays.Length; i++)
+        {
+            arrays[i] = StringFromBytePointer(bytes[i]);
+        }
+
+        return arrays;
+    }
+
+
     /*
-        Woah it works fine, thanks Jester @QubitTooLate!!!
+        SBYTE * and SBYTE **
     */
-    internal class UnmanagedUTF8StringArray : IDisposable
+    public static string StringFromSBytePointer(sbyte *s, bool freePtr = false)
+    {
+        if (s == null)
+        {
+            return string.Empty;
+        }
+
+        byte* ptr = (byte*) s;
+        while (*ptr != 0)
+        {
+            ptr++;
+        }
+
+        string result = System.Text.Encoding.UTF8.GetString(
+            (byte *)s, (int) (ptr - (byte*) s)
+        );
+
+        if (freePtr)
+        {
+            NativeMemory.Free(s);
+        }
+        return result;
+    }
+
+    public static unsafe sbyte* SBytePointerFromString(string str)
+    {
+        if (str == null)
+        {
+            return (sbyte*) 0;
+        }
+
+        int bufferSize = LengthSize(str);
+        sbyte *buffer = (sbyte *)NativeMemory.Alloc((nuint)bufferSize);
+        fixed (char* strPtr = str)
+        {
+            Encoding.UTF8.GetBytes(strPtr, str.Length + 1, (byte *)buffer, bufferSize);
+        }
+        return buffer;
+    }
+
+    class UnmanagedFromSBytePoublePointers : IDisposable
     {
         private sbyte **__values;
         private int __length;
         private bool disposed = false;
 
-        public UnmanagedUTF8StringArray(string[] arrays)
+        public UnmanagedFromSBytePoublePointers(string[] arrays)
         {
             __values = (sbyte **)NativeMemory.Alloc((nuint)arrays.Length, (nuint)sizeof(sbyte *));
             __length = arrays.Length;
@@ -105,14 +241,13 @@ public unsafe static class ConvFunctions
             }
         }
 
-        ~UnmanagedUTF8StringArray()
+        ~UnmanagedFromSBytePoublePointers()
         {
             Dispose(false);
         }
 
-         private void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
-            // Check to see if Dispose has already been called.
             if(!this.disposed)
             {
                 if(disposing)
@@ -158,13 +293,13 @@ public unsafe static class ConvFunctions
         }
     }
 
-    public static sbyte **SByteDoublePointersWithStringArray(string[] args)
+    public static sbyte **SByteDoublePointersFromStringArray(string[] args)
     {
-        var um = new UnmanagedUTF8StringArray(args);
+        UnmanagedFromSBytePoublePointers um = new(args);
         return um.Valves;
     }
 
-    public static string[] StringArrayWithSByteDoublePointers(sbyte **sArrays, int array_length)
+    public static string[] StringArrayFromSByteDoublePointers(sbyte **sArrays, int array_length)
     {
         if (array_length < 0)
         {
@@ -174,9 +309,102 @@ public unsafe static class ConvFunctions
         string[] arrays = new string[array_length];
         for (int i = 0; i < array_length; i++)
         {
-            arrays[i] = StringwithSBytePointer(sArrays[i]);
+            arrays[i] = StringFromSBytePointer(sArrays[i]);
         }
 
         return arrays;
+    }
+
+    /*
+        Next version possible with void * and void ** for Structures
+        Like GLFW GLFW_Monitors** as void **
+        Still working....
+    */
+    class UnmanagedStructurePointer : IDisposable
+    {
+        private void *_value;
+        private bool disposed = false;
+
+        public UnmanagedStructurePointer(void *structure)
+        {
+            if (_value != null)
+            {
+                _value = NativeMemory.Alloc((nuint)structure);
+            }
+        }
+
+        ~UnmanagedStructurePointer()
+        {
+            Dispose(false);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposed)
+            {
+                if (disposing)
+                {
+                    NativeMemory.Free(_value);
+                }
+
+                NativeMemory.Free(_value);
+            }
+        }
+
+        public void *this[void *structure]
+        {
+            get
+            {
+                if (structure == null)
+                {
+                    NativeMemory.Free(structure);
+                }
+                else
+                {
+                    _value = NativeMemory.Alloc((nuint)structure);
+                }
+                return _value;
+            }
+        }
+
+        public void *Value
+        {
+            get
+            {
+                return _value;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+    }
+
+    // Like malloc(), alloc() or other alloc-functions in C/C++
+    // Never use Marshal.AllocGlobal()!!!
+    public static void *Alloc(void* structure)
+    {
+        UnmanagedStructurePointer um = new(structure);
+        return um.Value;
+    }
+
+    // Like free() in C/C++
+    public static void Free(void *structure)
+    {
+        UnmanagedStructurePointer um = new(structure);
+        if (um.Value != null)
+        {
+            um.Dispose();
+        }
+    }
+
+    // Like delete() in C/C++
+    public static void Delete(void *structure)
+    {
+        if (Free != null)
+        {
+            Free(structure);
+        }
     }
 }
