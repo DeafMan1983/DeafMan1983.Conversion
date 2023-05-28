@@ -64,11 +64,11 @@ pfnMainFunc(sArrays, args.length);
 ```
 New feature for Alloc, Free and Delete like `C/C++`
 ```
-Display *display = XOpenDisplay(null);
-Alloc(display);
+SDL_Renderer *renderer = SDL_CreateRenderer(window, null, SDL_RENDER_ACCELERATOR);
+Alloc(renderer);
 ....
-XCloseDisplay(display);
-Delete(display);
+SDL_DestroyRenderer(display);
+Delete(renderer);
 ```
 
 And I have updated already in Nuget.org
