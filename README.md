@@ -1,4 +1,11 @@
-# ConversionFunctions
+# ConversionFunctions - Legacy version = 4.0.0
+
+# // UPDATE: Notification: Next version will to be a closed sources for `Format<XXXXXXXXX>()` and more new functions with `sbyte*`, `byte*` and `void*.
+Added new class SharedLibsfor Invoking shared libraries for Native Aot only in net7.0 and net8.0
+Added new class-extension for `sbyte` and `byte` SbyteExtensions with implements like `string.Format()` and more.
+
+Please be patient for next version 5.0.0 `DeafMan1983.Conversions`.
+If you want to get a closed/paid source of `DeafMan1983.Conversions` - You would like to wait patient for new release on my website....
 
 Conversion functions for sbyte * and string hacks!
 
