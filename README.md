@@ -81,7 +81,7 @@ New feature for Alloc, Free and Delete like `C/C++`
 SDL_Renderer *renderer = SDL_CreateRenderer(window, null, SDL_RENDER_ACCELERATOR);
 Alloc(renderer);
 ....
-SDL_DestroyRenderer(display);
+SDL_DestroyRenderer(renderer);
 Delete(renderer);
 ```
 
